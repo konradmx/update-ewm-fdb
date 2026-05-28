@@ -93,9 +93,27 @@ steruje stała `DRY_RUN: bool` w kodzie (nie CLI).
 `OPERAT = 0` znaczy "brak operatu" (NULL nie występuje — potwierdzone empirycznie).
 Sentinel-guard w UPDATE: `WHERE UID = ? AND OPERAT = 0`.
 
-**Dominujący typ operatu:** dla obu baz (GESUT i BDOT500) dominującym typem jest
-**TYP=3** — domyślna wartość `OPERAT_TYP_FILTER = {3}` w `ewm_elements_update.py`
-jest poprawna dla obu przypadków.
+### Słownik typów operatu (kolumna `EW_OPERATY.TYP`)
+
+Lista odtworzona z ComboBox `OperatList` w `C:\Program Files\Geobid\EWMAPA\EwMapa.exe`
+(zasób formularza Delphi, ten sam wykaz powtarza się w 3 miejscach binarki):
+
+| TYP | Opis |
+|---|---|
+| 1 | Operaty ewidencyjne |
+| 2 | Operaty przejściowe |
+| 3 | **Operaty bazowe** — dominujący |
+| 4 | Szkice polowe |
+| 5 | Inne dokumenty |
+| 6 | Rejestr zgłoszeń |
+| 7 | Materiały zasobu |
+| 8 | (poza listą GUI; w danych testowych występuje, format `P.1017.ROK.LP` — prawdopodobnie bieżące/robocze KERG) |
+
+**Dominujący typ:** w pliku punktów (`pkt_z bazy.txt` / `pkt_z bazy_wersja2.txt` —
+**identyczne**, ten sam MD5) TYP=3 stanowi **97.63%** wpisów (580 720 / 594 837);
+TYP=1: 1.58%, TYP=2: 0.16%, TYP=8: 0.64%. Dlatego domyślna wartość
+`OPERAT_TYP_FILTER = {3}` w `ewm_elements_update.py` jest poprawna zarówno dla
+GESUT jak i BDOT500.
 
 ### Katalogi w testowych bazach
 
