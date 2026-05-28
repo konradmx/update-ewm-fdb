@@ -109,11 +109,22 @@ Lista odtworzona z ComboBox `OperatList` w `C:\Program Files\Geobid\EWMAPA\EwMap
 | 7 | Materiały zasobu |
 | 8 | (poza listą GUI; w danych testowych występuje, format `P.1017.ROK.LP` — prawdopodobnie bieżące/robocze KERG) |
 
-**Dominujący typ:** w pliku punktów (`pkt_z bazy.txt` / `pkt_z bazy_wersja2.txt` —
-**identyczne**, ten sam MD5) TYP=3 stanowi **97.63%** wpisów (580 720 / 594 837);
-TYP=1: 1.58%, TYP=2: 0.16%, TYP=8: 0.64%. Dlatego domyślna wartość
-`OPERAT_TYP_FILTER = {3}` w `ewm_elements_update.py` jest poprawna zarówno dla
-GESUT jak i BDOT500.
+**Dominujący typ:** w pliku punktów TYP=3 stanowi **97.63%** wpisów
+(580 720 / 594 837); TYP=1: 1.58%, TYP=2: 0.16%, TYP=8: 0.64%. Dlatego domyślna
+wartość `OPERAT_TYP_FILTER = {3}` w `ewm_elements_update.py` jest poprawna
+zarówno dla GESUT jak i BDOT500.
+
+> **Uwaga o danych testowych:** bazy `gesut.fdb` i `bdot500.fdb` są oczywiście
+> **różne** (różny MD5, różna zawartość), ale dołączone do nich pliki punktów
+> `Example_1\…\pkt_z bazy.txt` i `Example_2\…\pkt_z bazy_wersja2.txt` są
+> **identyczne bajt po bajcie** (ten sam MD5 `e3713f93…`).
+>
+> Wyjaśnienie klienta: produkcyjna baza punktów pomiarowych z operatami jest
+> **wspólna dla wszystkich typów baz** (GESUT, BDOT500, EWID, …). Klient
+> wyeksportował całą jej zawartość raz, a do każdego przykładu testowego
+> wrzucił kopię pod inną nazwą. Histogram TYP-ów dotyczy więc obu baz
+> w tym samym stopniu, a skrypt jest w naturalny sposób testowany tym samym
+> wejściem przeciwko `gesut.fdb` i `bdot500.fdb`.
 
 ### Katalogi w testowych bazach
 
