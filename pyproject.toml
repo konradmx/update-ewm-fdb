@@ -1,0 +1,8 @@
+[project]
+name = "geobid-kerg"
+version = "0.1.0"
+description = "EwMapa GESUT/BDOT500 operat assignment scripts"
+requires-python = ">=3.14"
+dependencies = [
+    "firebird-driver==2.0.3",
+]

@@ -1,0 +1,8 @@
+Example*
+101*
+_a
+.venv/
+__pycache__/
+*.pyc
+# bazy fdb poza projektem po przeniesieniu
+# *.fdb
