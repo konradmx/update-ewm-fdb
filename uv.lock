@@ -1,17 +1,6 @@
 version = 1
 revision = 3
-requires-python = ">=3.12"
-
-[[package]]
-name = "2026-05-07-geobid-kerg"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "firebird-driver" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "firebird-driver", specifier = "==2.0.3" }]
+requires-python = ">=3.14"
 
 [[package]]
 name = "firebird-base"
@@ -37,6 +26,17 @@ sdist = { url = "https://files.pythonhosted.org/packages/97/da/48da8f865f17bc7d0
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ff/bf/c396b8725f5d7d0df1c54ea5fecc8d4a99d515a8b116b7915e7813ad2994/firebird_driver-2.0.3-py3-none-any.whl", hash = "sha256:0c4dbea53c8ff003cd1c6fd254524f72757fa921f13a6ae23d846c7071d4f337", size = 109811, upload-time = "2026-04-20T12:01:56.855Z" },
 ]
+
+[[package]]
+name = "geobid-kerg"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "firebird-driver" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "firebird-driver", specifier = "==2.0.3" }]
 
 [[package]]
 name = "protobuf"

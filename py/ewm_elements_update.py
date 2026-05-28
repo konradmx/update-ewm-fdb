@@ -32,14 +32,18 @@ Przykłady:
   # Dry run GESUT (katalog ID=2, operaty TYP=3)
   python ewm_elements_update.py gesut.fdb punkty.txt --katalog 2 --typ 3
 
-  # Dry run BDOT500 (katalog ID=2, operaty TYP=2)
-  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 2
+  # Dry run BDOT500 (katalog ID=2, operaty TYP=3)
+  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 3
 
   # Wykonaj zmiany
-  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 2 --execute
+  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 3 --execute
 """
 
 from __future__ import annotations
+
+import sys
+sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
+sys.stderr.reconfigure(encoding='utf-8', line_buffering=True)
 
 import time
 from collections import defaultdict
@@ -784,8 +788,8 @@ if __name__ == "__main__":
             "Przyklady:\n"
             "  python ewm_elements_update.py gesut.fdb --info\n"
             "  python ewm_elements_update.py gesut.fdb punkty.txt --katalog 2 --typ 3\n"
-            "  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 2\n"
-            "  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 2 --execute"
+            "  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 3\n"
+            "  python ewm_elements_update.py bdot500.fdb punkty.txt --katalog 2 --typ 3 --execute"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )

@@ -27,6 +27,10 @@ Tryb pracy steruje stała DRY_RUN. Domyślnie True — żadnych zmian w bazie.
 
 from __future__ import annotations
 
+import sys
+sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
+sys.stderr.reconfigure(encoding='utf-8', line_buffering=True)
+
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,8 +41,8 @@ import firebird.driver as fb
 
 # =========================== KONFIGURACJA ============================
 
-DEFAULT_DB_PATH = r"D:\zzz_tmp\2026-05-07_geobid_KERG\Example_1\source\gesut.fdb"
-DEFAULT_FILE_PATH = r"D:\zzz_tmp\2026-05-07_geobid_KERG\Example_1\source\pkt_z bazy.txt"
+DEFAULT_DB_PATH = r"D:\zzz_tmp\2026-05-07_geobid_KERG\Example_1\1_source\gesut.fdb"
+DEFAULT_FILE_PATH = r"D:\zzz_tmp\2026-05-07_geobid_KERG\Example_1\1_source\pkt_z bazy.txt"
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 3050  # FB 3 w systemie; FB 2 i FB 5 na innych portach

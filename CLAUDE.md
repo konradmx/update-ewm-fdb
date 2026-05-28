@@ -18,10 +18,11 @@
 - **Manager pakietów:** `uv` — zależności w `pyproject.toml`, lock w `uv.lock`
 - **Venv:** `D:\.virtualenvs\venv_py314_ewm_fdb` — **poza katalogiem projektu**
   (projekt na Google Drive; ciężkie środowisko nie synchronizuje się przez sieć)
-- **Dodawanie pakietów:** `uv add <pakiet>` z aktywnym venv lub z ustawioną
-  zmienną `UV_PROJECT_ENVIRONMENT=D:\.virtualenvs\venv_py314_ewm_fdb`
-- **Uruchamianie skryptów:** zawsze `python -u -X utf8 <skrypt.py>` — Windows
-  CP1250
+- **Dodawanie pakietów:** `uv add <pakiet>` (venv wskazany przez zmienną
+  systemową `UV_PROJECT_ENVIRONMENT`, ustawioną na poziomie użytkownika Windows)
+- **Uruchamianie skryptów:** `uv run python py/<skrypt.py>` — flagi `-u` i
+  `-X utf8` są zbędne; każdy skrypt ustawia kodowanie i line-buffering przez
+  `sys.stdout/stderr.reconfigure(encoding='utf-8', line_buffering=True)`
 - **Terminal:** Git Bash (MINGW64)
 
 ## Firebird
@@ -55,16 +56,26 @@ D:\zzz_tmp\2026-05-07_geobid_KERG\Example_2\3_automated\bdot500.fdb
 
 ## Cel projektu
 
-Skrypt `py/ewm_elements_update.py` aktualizuje kolumnę `OPERAT` w tabelach
-elementów graficznych (`EW_POLYLINE`, `EW_TEXT`) na podstawie pliku punktów
+Dwa skrypty przypisują operaty do geometrii na podstawie pliku punktów
 eksportowanego z EwMapy (format TSV: `ID \t X \t Y \t TYP#NUMER_OPERATU`).
 
-Tryby pracy:
+### `py/ewm_elements_update.py` — **główny skrypt**
+
+Aktualizuje `OPERAT` bezpośrednio w tabelach elementów (`EW_POLYLINE`,
+`EW_TEXT`). Tryb pracy sterowany flagami CLI:
+
 - `--info` — tylko info o strukturze bazy (katalogi, warstwy); brak zmian
 - (domyślny) **DRY RUN** — analiza i raport, zero zmian w bazie
 - `--execute` — zapisuje zmiany w bazie
 
 Kluczowe opcje CLI: `--katalog ID`, `--typ N [N...]`, `--tolerance M`.
+
+### `py/ewm_objects_update.py` — skrypt obiektowy (starsza architektura)
+
+Aktualizuje `OPERAT` w `EW_OBIEKTY` (poziom obiektu, nie elementu).
+Do znalezienia obiektu używa junction table `EW_OB_ELEMENTY` (kolumny:
+`UIDO`, `IDE`, `TYP`; TYP=0 → polilinia, TYP=1 → tekst). Tryb pracy
+steruje stała `DRY_RUN: bool` w kodzie (nie CLI).
 
 ## Schema bazy (kluczowe tabele)
 
@@ -74,11 +85,17 @@ Kluczowe opcje CLI: `--katalog ID`, `--typ N [N...]`, `--tolerance M`.
 | `EW_OPERATY` | słownik operatów (~6868) | `UID`, `TYP`, `NUMER` |
 | `EW_WARSTWA_LINIOWA` | definicje warstw liniowych | `ID`, `ID_KATALOGU` |
 | `EW_WARSTWA_TEXTOWA` | definicje warstw tekstowych | `ID`, `ID_KATALOGU` |
-| `EW_POLYLINE` | geometria liniowa (~396k) | `UID`, `ID_WARSTWY`, `OPERAT`, `P0_X/Y`, `P1_X/Y`, `PN_X/Y` |
+| `EW_POLYLINE` | geometria liniowa (~396k) | `UID`, `ID`, `ID_WARSTWY`, `OPERAT`, `P0_X/Y`, `P1_X/Y`, `PN_X/Y` |
 | `EW_TEXT` | etykiety (~295k) | `UID`, `ID_WARSTWY`, `OPERAT`, `POS_X`, `POS_Y` |
+| `EW_OBIEKTY` | obiekty warstwy (ewm_objects) | `UID`, `OPERAT`, `NUMER`, `KOD`, `IDKATALOG` |
+| `EW_OB_ELEMENTY` | junction: obiekt ↔ geometria | `UIDO`, `IDE`, `TYP` (0=poly, 1=text) |
 
 `OPERAT = 0` znaczy "brak operatu" (NULL nie występuje — potwierdzone empirycznie).
 Sentinel-guard w UPDATE: `WHERE UID = ? AND OPERAT = 0`.
+
+**Dominujący typ operatu:** dla obu baz (GESUT i BDOT500) dominującym typem jest
+**TYP=3** — domyślna wartość `OPERAT_TYP_FILTER = {3}` w `ewm_elements_update.py`
+jest poprawna dla obu przypadków.
 
 ### Katalogi w testowych bazach
 
