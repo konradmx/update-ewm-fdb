@@ -21,15 +21,34 @@
   W katalogu projektu siedzi tylko `.venv` jako **junction** (Windows) / dowiązanie
   symboliczne (FreeBSD/Linux) wskazujące na ten katalog.
 - **Setup po klonowaniu** — jedno polecenie z katalogu projektu:
-  - Windows (PowerShell): `.\bootstrap.ps1`
-  - FreeBSD/Linux/Git Bash: `./bootstrap.sh`
+  - **Windows: `.\bootstrap.ps1` (PowerShell)** — jedyna obsługiwana ścieżka
+    na Windows. `bootstrap.sh` w Git Bashu na Windows **nie zadziała**:
+    `$HOME` wskazuje na `C:\Users\<user>\`, więc domyślna baza venvów
+    rozjeżdża się z `D:\.virtualenvs\`, a `ln -s` w MSYS bez Developer Mode
+    nie tworzy junction (kopiuje katalog albo rzuca błąd). Junction
+    `mklink /J` działa tylko z `cmd.exe`/PowerShella.
+  - **FreeBSD/Linux: `./bootstrap.sh`**
 
   Skrypt jest idempotentny: zakłada katalog venva pod docelową ścieżką
-  (`uv venv --python 3.14`), tworzy junction `.venv` w projekcie, instaluje
-  zależności (`uv sync`). Domyślna baza venvów to `D:\.virtualenvs\` (Windows)
-  i `~/.virtualenvs/` (FreeBSD); można nadpisać zmienną `VIRTUALENVS_HOME`.
-  Nazwa venva jest hardcoded w pierwszym wierszu skryptu (`venv_py314_ewm_fdb`)
-  — edytuj przy portowaniu do innego projektu.
+  (`uv venv --python 3.14`), tworzy junction (Windows) / symlink (Unix)
+  `.venv` w projekcie, instaluje zależności (`uv sync`). Domyślna baza venvów
+  to `D:\.virtualenvs\` (Windows) i `~/.virtualenvs/` (FreeBSD); można
+  nadpisać zmienną `VIRTUALENVS_HOME`. Nazwa venva jest hardcoded w pierwszym
+  wierszu skryptu (`venv_py314_ewm_fdb`) — edytuj przy portowaniu do innego
+  projektu.
+
+  **Pierwsze odpalenie na świeżym Windows** wymaga jednorazowego odblokowania
+  uruchamiania skryptów PowerShell:
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+  ```
+  `RemoteSigned` dopuszcza skrypty lokalne (nasz `bootstrap.ps1`), wymaga
+  podpisu dla pobranych z internetu. Alternatywa bez modyfikacji polityki
+  (na jedno odpalenie): `powershell -ExecutionPolicy Bypass -File .\bootstrap.ps1`.
+
+  **`bootstrap.ps1` uruchamiaj z otwartej sesji PowerShella** (`cd <projekt>`,
+  potem `.\bootstrap.ps1`). Dwuklik w Explorerze odpala skrypt w nowym oknie
+  i zamyka je natychmiast — błąd, jeśli wystąpi, miga przez ułamek sekundy.
 - **Dodawanie pakietów:** `uv add <pakiet>` (z poziomu projektu — uv idzie po
   `.venv` przez junction, więc nie trzeba ustawiać `UV_PROJECT_ENVIRONMENT`).
 - **Uruchamianie skryptów:** `uv run python py/<skrypt.py>` — flagi `-u` i
