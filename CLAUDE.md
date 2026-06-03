@@ -17,13 +17,30 @@
 - **Python:** 3.14
 - **Manager pakietów:** `uv` — zależności w `pyproject.toml`, lock w `uv.lock`
 - **Venv:** `D:\.virtualenvs\venv_py314_ewm_fdb` — **poza katalogiem projektu**
-  (projekt na Google Drive; ciężkie środowisko nie synchronizuje się przez sieć)
-- **Dodawanie pakietów:** `uv add <pakiet>` (venv wskazany przez zmienną
-  systemową `UV_PROJECT_ENVIRONMENT`, ustawioną na poziomie użytkownika Windows)
+  (projekt na Google Drive; ciężkie środowisko nie synchronizuje się przez sieć).
+  W katalogu projektu siedzi tylko `.venv` jako **junction** (Windows) / dowiązanie
+  symboliczne (FreeBSD/Linux) wskazujące na ten katalog.
+- **Setup po klonowaniu** — jedno polecenie z katalogu projektu:
+  - Windows (PowerShell): `.\bootstrap.ps1`
+  - FreeBSD/Linux/Git Bash: `./bootstrap.sh`
+
+  Skrypt jest idempotentny: zakłada katalog venva pod docelową ścieżką
+  (`uv venv --python 3.14`), tworzy junction `.venv` w projekcie, instaluje
+  zależności (`uv sync`). Domyślna baza venvów to `D:\.virtualenvs\` (Windows)
+  i `~/.virtualenvs/` (FreeBSD); można nadpisać zmienną `VIRTUALENVS_HOME`.
+  Nazwa venva jest hardcoded w pierwszym wierszu skryptu (`venv_py314_ewm_fdb`)
+  — edytuj przy portowaniu do innego projektu.
+- **Dodawanie pakietów:** `uv add <pakiet>` (z poziomu projektu — uv idzie po
+  `.venv` przez junction, więc nie trzeba ustawiać `UV_PROJECT_ENVIRONMENT`).
 - **Uruchamianie skryptów:** `uv run python py/<skrypt.py>` — flagi `-u` i
   `-X utf8` są zbędne; każdy skrypt ustawia kodowanie i line-buffering przez
   `sys.stdout/stderr.reconfigure(encoding='utf-8', line_buffering=True)`
 - **Terminal:** Git Bash (MINGW64)
+
+> **Uwaga historyczna:** wcześniej venv był wskazywany przez user-level zmienną
+> `UV_PROJECT_ENVIRONMENT`. Zostało to porzucone, bo zmienna jest globalna —
+> kolidowała z innymi projektami pod `D:\.virtualenvs\`. Junction lokalny dla
+> projektu rozwiązuje problem bez globalnego stanu.
 
 ## Firebird
 
