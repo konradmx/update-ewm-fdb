@@ -46,9 +46,11 @@ sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
 sys.stderr.reconfigure(encoding='utf-8', line_buffering=True)
 
 import os
+import shutil
 import time
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
@@ -677,6 +679,14 @@ def run_update(
 
     # === Faza UPDATE ===
     if not dry_run:
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = db_path_resolved.with_name(
+            f"{db_path_resolved.stem}_{ts}{db_path_resolved.suffix}"
+        )
+        print(f"\n  Backup bazy: {backup_path}")
+        shutil.copy2(db_path_resolved, backup_path)
+        print(f"  Backup OK ({backup_path.stat().st_size / 1_048_576:.1f} MB)")
+
         print(f"\n!!! Wykonuje zmiany w bazie !!!")
         print(f"  Nowe operaty do INSERT: {len(new_operaty_to_insert):,}")
         print(f"  Elementy do UPDATE:     {len(would_update):,}")
