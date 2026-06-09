@@ -45,6 +45,7 @@ import sys
 sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
 sys.stderr.reconfigure(encoding='utf-8', line_buffering=True)
 
+import os
 import time
 from collections import defaultdict
 from dataclasses import dataclass
@@ -52,6 +53,14 @@ from pathlib import Path
 from typing import Iterable
 
 import firebird.driver as fb
+
+if sys.platform == "win32" and not fb.driver_config.fb_client_library.value:
+    for _d in (r"C:\Program Files\Firebird\Firebird_3_0",
+               r"C:\Program Files (x86)\Firebird\Firebird_3_0"):
+        _dll = os.path.join(_d, "fbclient.dll")
+        if os.path.isfile(_dll):
+            fb.driver_config.fb_client_library.value = _dll
+            break
 
 
 # =========================== KONFIGURACJA ============================
